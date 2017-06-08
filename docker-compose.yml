@@ -1,0 +1,45 @@
+version: '2'
+
+services:
+  wordpress:
+    hostname: wordpress
+    container_name: wordpress
+    image: sandockeraccount/wordpress
+    restart: always
+    depends_on:
+      - wordpressdb
+    ports:
+      - 80
+    volumes:
+      - /var/lib/wordpress/wp_html:/var/www/html
+    environment:
+      WORDPRESS_DB_NAME: wordpressdb
+      WORDPRESS_DB_HOST: wordpressdb
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+
+  wordpressdb:
+    hostname: wordpressdb
+    container_name: wordpressdb
+    image: mysql
+    restart: always
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: wordpressdbroot 
+      MYSQL_DATABASE: wordpressdb
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+
+  nginx:
+    hostname: nginx
+    container_name: nginx
+    image: sandockeraccount/nginx
+    restart: always
+    depends_on:
+      - wordpress
+    ports:
+    - 80:80
+
+volumes:
+  db_data:

@@ -1,0 +1,53 @@
+FROM ubuntu:14.04
+MAINTAINER SantoshChituprolu
+
+ENV WORDPRESS_DB_NAME wordpressdb
+ENV WORDPRESS_DB_HOST wordpressdb
+ENV WORDPRESS_DB_USER wordpress
+ENV WORDPRESS_DB_PASSWORD wordpress
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN \
+    apt-get update && \
+    apt-get install -y language-pack-en-base && \
+    export LC_ALL=en_US.UTF-8 && \
+    export LANG=en_US.UTF-8 && \
+    apt-get install -y software-properties-common && \
+    add-apt-repository ppa:ondrej/php
+
+RUN \
+    apt-get update && \
+    apt-get install -y apache2 apache2-utils curl && \
+    apt-get install -y php libapache2-mod-php php-mcrypt php-mysql php-cli php-gd php-cgi && \
+    rm -r /var/lib/apt/lists/*
+
+#ADD http://wordpress.org/latest.tar.gz /tmp/
+
+RUN \
+    curl -SL http://wordpress.org/latest.tar.gz \
+    | tar -xzC /tmp/ && \
+    mv /tmp/wordpress/* /var/www/html/ && \
+    rm -rf /tmp/wordpress && \
+    rm -rf /var/www/html/index.html
+
+COPY update_config.sh /var/www/html/update_config.sh
+RUN chmod +x /var/www/html/update_config.sh
+RUN cd /var/www/html && \
+    /var/www/html/update_config.sh
+
+RUN \
+    mkdir -p /var/www/html/wp-content/uploads && \
+    chown -R www-data:www-data /var/www/html && \
+    chmod -R 755 /var/www/html
+
+VOLUME [ "/var/www/html" ]
+WORKDIR /var/www/html
+
+#COPY wp-config.php /var/www/html/wp-config.php
+#CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
+
+ENTRYPOINT ["/usr/sbin/apache2ctl"]
+CMD ["-D", "FOREGROUND"]
+
+EXPOSE 80
