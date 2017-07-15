@@ -24,7 +24,7 @@ services:
     image: mysql
     restart: always
     volumes:
-      - db_data:/var/lib/mysql
+      - /var/lib/wordpress/mysql:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: wordpressdbroot 
       MYSQL_DATABASE: wordpressdb

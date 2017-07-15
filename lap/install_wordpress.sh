@@ -31,9 +31,6 @@ split -l $LINE_NUMBER wp-config-sample.php
 cat xaa > wp-config.php
 echo $SALT >> wp-config.php
 cat xab >> wp-config.php 
-
-chmod 755 wp-config.php
-
 rm -rf xa*
 
 mkdir -p /var/www/html/wp-content/uploads
