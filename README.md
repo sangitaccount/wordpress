@@ -1,0 +1,2 @@
+# wordpress
+Customized Wordpress Dockerfile
